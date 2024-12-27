@@ -28,8 +28,8 @@ the build products and runtime dependencies from the rest of your system.
 To proceed with building, you must specify the Anki version you want, by replacing `<version>` with something like `23.12.1` and `<Dockerfile>` with the chosen Dockerfile (e.g., `Dockerfile` or `Dockerfile.distroless`)
 
 ```bash
-# Execute this command from the root directory of your project
-docker build -f docs/syncserver/<Dockerfile> --no-cache --build-arg ANKI_VERSION=<version> -t anki-sync-server .
+# Execute this command from this directory
+docker build -f <Dockerfile> --no-cache --build-arg ANKI_VERSION=<version> -t anki-sync-server .
 ```
 
 # Run container
@@ -40,11 +40,19 @@ Once done with build, you can proceed with running this image with the following
 # this will create anki server
 docker run -d \
     -e "SYNC_USER1=admin:admin" \
+    # -e "PUID=1050" \
+    # -e "PGID=1050" \
     -p 8080:8080 \
     --mount type=volume,src=anki-sync-server-data,dst=/anki_data \
     --name anki-sync-server \
     anki-sync-server
 ```
+
+You can specify the `PUID` and `PGID` for the user and group id of the process
+that will run the sync server. This is valuable when you want the files written
+and read from the `/anki_data` volume to belong to a particular user/group e.g.
+to access it from the host or another container. Note the the ids chosen for
+`PUID` and `PGID` must not already be in use inside the container.
 
 However, if you want to have multiple users, you have to use the following approach:
 
