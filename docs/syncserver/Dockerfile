@@ -16,6 +16,8 @@ FROM alpine:3.21.0
 ENV PUID=1000
 ENV PGID=1000
 
+ENV SYNC_USER1="user1:veryinsecure!"
+
 COPY --from=builder /anki-server/bin/anki-sync-server /usr/local/bin/anki-sync-server
 
 RUN apk update && apk add --no-cache bash su-exec && rm -rf /var/cache/apk/*
